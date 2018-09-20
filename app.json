@@ -3,11 +3,11 @@
   "description": "Dank Face Bot, deployed on heroku",
   "image": "heroku/python",
   "repository": "https://github.com/dixneuf19/dank-face-bot",
-  "keywords": ["python", "django", "face-recognition", "dank", "telegram" ],
+  "keywords": ["python", "flask", "face-recognition", "dank", "telegram" ],
   "addons": [ "heroku-postgresql" ],
   "env": {
     "SECRET_KEY": {
-      "description": "The secret key for the Django application.",
+      "description": "Whatever secret key we might need",
       "generator": "secret"
     }
   },
