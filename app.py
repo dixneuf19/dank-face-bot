@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from datetime import datetime
 app = Flask(__name__)
 
@@ -17,7 +17,7 @@ def homepage():
 @app.route('/telegram_webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
-        return "<h5>Il y a eu " + len(updates_from_telegram) + " updates telegram</h5> <tr>" + str(updates_from_telegram)
+        return "<h5>Il y a eu " + str(len(updates_from_telegram)) + " updates telegram</h5> <tr>" + str(updates_from_telegram)
     elif request.method == 'POST':
         body = request.json()
         updates_from_telegram.append(body)
