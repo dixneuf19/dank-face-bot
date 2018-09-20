@@ -19,7 +19,7 @@ def webhook():
     if request.method == 'GET':
         return "<h5>Il y a eu " + str(len(updates_from_telegram)) + " updates telegram</h5> <tr>" + str(updates_from_telegram)
     elif request.method == 'POST':
-        body = request.json()
+        body = request.json
         updates_from_telegram.append(body)
         return saved
 
