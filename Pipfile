@@ -8,6 +8,8 @@ gunicorn = "*"
 flask = "*"
 
 [dev-packages]
+pylint = "<2.0.0"
+black = "*"
 
 [requires]
 python_version = "3.6"
