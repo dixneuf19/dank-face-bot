@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 updates_from_telegram = []
 
-TOKEN = "630049189:AAGuWWg064yK7kShF8_oAg0quEb9GccZtFI"
+TOKEN = "token"
 
 @app.route('/')
 def homepage():
@@ -24,12 +24,14 @@ def webhook():
     elif request.method == 'POST':
         updates = request.get_json()
         updates_from_telegram.append(updates)
+        for u in updates:
+            respondToMessage(update)
 
 
         return saved
 
 def respondToMessage(update):
-    if !(update["message"]["from"]["is_bot"]):
+    if not(update["message"]["from"]["is_bot"]):
         chat_id = update["chat"]["id"]
         prenom = update["message"]["from"]["first_name"]
 
