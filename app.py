@@ -14,13 +14,11 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 
-TOKEN = "token"
-
 logger = logging.getLogger(__name__)
 
 
 PORT = int(os.environ.get('PORT', '8443'))
-TOKEN = "token"
+TOKEN = os.environ.get('TOKEN')
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
