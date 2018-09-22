@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """Simple Bot to reply to Telegram messages.
 This program is dedicated to the public domain under the CC0 license.
 This Bot uses the Updater class to handle the bot.
@@ -10,15 +13,17 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
-import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import logging
+import logging, os
+
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-
-PORT = int(os.environ.get('PORT', '8443'))
 TOKEN = os.environ.get('TOKEN')
+
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
@@ -29,7 +34,7 @@ def start(bot, update):
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    update.message.reply_text('DANK FACE BOT')
 
 
 def echo(bot, update):
@@ -41,25 +46,33 @@ def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
 
-"""Start the bot."""
-# Create the EventHandler and pass it your bot's token.
-updater = Updater(TOKEN)
 
-# Get the dispatcher to register handlers
-dp = updater.dispatcher
+def main():
+    """Start the bot."""
+    # Create the EventHandler and pass it your bot's token.
+    updater = Updater(TOKEN)
 
-# on different commands - answer in Telegram
-dp.add_handler(CommandHandler("start", start))
-dp.add_handler(CommandHandler("help", help))
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
 
-# on noncommand i.e message - echo the message on Telegram
-dp.add_handler(MessageHandler(Filters.text, echo))
+    # on different commands - answer in Telegram
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", help))
 
-# log all errors
-dp.add_error_handler(error)
+    # on noncommand i.e message - echo the message on Telegram
+    # dp.add_handler(MessageHandler(Filters.text, echo))
 
-updater.start_webhook(listen="0.0.0.0",
-                    port=PORT,
-                    url_path=TOKEN)
-updater.bot.set_webhook("https://dank-face-bot.herokuapp.com/" + TOKEN)
-updater.idle()
+    # log all errors
+    dp.add_error_handler(error)
+
+    # Start the Bot
+    updater.start_polling()
+
+    # Run the bot until you press Ctrl-C or the process receives SIGINT,
+    # SIGTERM or SIGABRT. This should be used most of the time, since
+    # start_polling() is non-blocking and will stop the bot gracefully.
+    updater.idle()
+
+
+if __name__ == '__main__':
+    main()
