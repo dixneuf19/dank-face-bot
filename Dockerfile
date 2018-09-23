@@ -34,11 +34,13 @@ RUN cd ~ && \
     cd  dlib/ && \
     python3 setup.py install --yes USE_AVX_INSTRUCTIONS
 
+RUN pip3 install face-recognition python-telegram-bot path.py
 
 # The rest of this file just runs an example script.
 
 COPY . /root/dank-face-bot
-RUN cd /root/dank-face-bot && \
-    pip3 install -r requirements.txt
+
+# RUN cd /root/dank-face-bot && \
+#     pip3 install -r requirements.txt
 
 CMD TOKEN=$TOKEN python3 /root/dank-face-bot/app.py

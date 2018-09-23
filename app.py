@@ -15,7 +15,7 @@ bot.
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging, os
-import face_recognition
+import find_faces.process_pic as process_pic
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -42,6 +42,35 @@ def echo(bot, update):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
 
+def dank_face(bot, update):
+    """Send you back your image."""
+
+    newPhoto = bot.get_file(update.message.photo[-1])
+    fileName = newPhoto.file_id + ".jpg"
+    newPhoto.download(fileName)
+
+    new_pic = process_pic.run_bot(fileName)
+    logger.info("Find " + str(len(new_pic)) + " faces")
+
+    try:
+
+        for i in range(len(new_pic)):
+            try:
+                bot.send_photo(chat_id=update.message.chat_id, photo=open(new_pic[i], 'rb'))
+            except:
+                pass
+    except:
+        raise
+    finally:
+        os.remove(fileName)
+
+        for i in range(len(new_pic)):
+            try:
+                os.remove(new_pic[i])
+            except:
+                pass
+
+
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
@@ -62,6 +91,8 @@ def main():
 
     # on noncommand i.e message - echo the message on Telegram
     # dp.add_handler(MessageHandler(Filters.text, echo))
+
+    dp.add_handler(MessageHandler(Filters.photo, dank_face))
 
     # log all errors
     dp.add_error_handler(error)
