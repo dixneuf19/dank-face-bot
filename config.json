@@ -1,6 +1,6 @@
 {
     "nb_faces": 2,
-    "margin": 0.4,
+    "margin": -0.1,
     "rotate": true,
     "face_crop": true,
     "out_path": "",
