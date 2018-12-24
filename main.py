@@ -14,14 +14,10 @@ bot.
 """
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import logging, os
-import find_faces.process_pic as process_pic
+import os
+from logzero import logger
+# import find_faces.process_pic as process_pic
 
-# Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-
-logger = logging.getLogger(__name__)
 
 TOKEN = os.environ.get('TOKEN')
 
@@ -30,11 +26,13 @@ TOKEN = os.environ.get('TOKEN')
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """Send a message when the command /start is issued."""
+    logger.info('Received /start command from %s' % update.message.from_user.username)
     update.message.reply_text('Hi!')
 
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
+    logger.info('Received /help command from %s' % update.message.from_user.username)
     update.message.reply_text('DANK FACE BOT')
 
 
@@ -42,33 +40,33 @@ def echo(bot, update):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
 
-def dank_face(bot, update):
-    """Send you back your image."""
+# def dank_face(bot, update):
+#     """Send you back your image."""
 
-    newPhoto = bot.get_file(update.message.photo[-1])
-    fileName = newPhoto.file_id + ".jpg"
-    newPhoto.download(fileName)
+#     newPhoto = bot.get_file(update.message.photo[-1])
+#     fileName = newPhoto.file_id + ".jpg"
+#     newPhoto.download(fileName)
 
-    new_pic = process_pic.run_bot(fileName)
-    logger.info("Find " + str(len(new_pic)) + " faces")
+#     new_pic = process_pic.run_bot(fileName)
+#     logger.info("Find " + str(len(new_pic)) + " faces")
 
-    try:
+#     try:
 
-        for i in range(len(new_pic)):
-            try:
-                bot.send_photo(chat_id=update.message.chat_id, photo=open(new_pic[i], 'rb'))
-            except:
-                pass
-    except:
-        raise
-    finally:
-        os.remove(fileName)
+#         for i in range(len(new_pic)):
+#             try:
+#                 bot.send_photo(chat_id=update.message.chat_id, photo=open(new_pic[i], 'rb'))
+#             except:
+#                 pass
+#     except:
+#         raise
+#     finally:
+#         os.remove(fileName)
 
-        for i in range(len(new_pic)):
-            try:
-                os.remove(new_pic[i])
-            except:
-                pass
+#         for i in range(len(new_pic)):
+#             try:
+#                 os.remove(new_pic[i])
+#             except:
+#                 pass
 
 
 
@@ -92,7 +90,7 @@ def main():
     # on noncommand i.e message - echo the message on Telegram
     # dp.add_handler(MessageHandler(Filters.text, echo))
 
-    dp.add_handler(MessageHandler(Filters.photo, dank_face))
+    # dp.add_handler(MessageHandler(Filters.photo, dank_face))
 
     # log all errors
     dp.add_error_handler(error)
