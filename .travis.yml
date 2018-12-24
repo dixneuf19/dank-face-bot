@@ -22,7 +22,6 @@ env:
     - CLOUDSDK_COMPUTE_ZONE=europe-west1-d
     - DOCKER_IMAGE_NAME=dank-face-bot
     - KUBE_DEPLOYMENT_NAME=dank-face-bot
-    - KUBE_DEPLOYMENT_CONTAINER_NAME=dank-face-bot
 
 # safelist
 branches:

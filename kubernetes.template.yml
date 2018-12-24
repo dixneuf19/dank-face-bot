@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${KUBERNETES_APP_NAME}-deployment
+  labels:
+    app: ${KUBERNETES_APP_NAME}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${KUBERNETES_APP_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${KUBERNETES_APP_NAME}
+    spec:
+      containers:
+      - name: $KUBERNETES_APP_NAME
+        image: gcr.io/${PROJECT_NAME_PRD}/${DOCKER_IMAGE_NAME}:${TRAVIS_COMMIT}
+        env:
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: telegram-token
+                  key: token
+
