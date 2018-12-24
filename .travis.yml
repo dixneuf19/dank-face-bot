@@ -31,6 +31,8 @@ branches:
   - /^deploy-.*$/
   - service
 
+before_install:
+  - openssl aes-256-cbc -K $encrypted_8301fcd250ef_key -iv $encrypted_8301fcd250ef_iv -in client-secret.json.enc -out client-secret.json -d
 # command to install dependencies
 install:
   - pip install -r requirements.txt
