@@ -46,11 +46,15 @@ before_deploy:
   - gcloud --quiet components update
   - gcloud --quiet components update kubectl
   - gcloud auth activate-service-account --key-file client-secret.json
+  - gcloud --quiet config set project $PROJECT_NAME_PRD
+  - gcloud --quiet config set container/cluster $CLUSTER_NAME_PRD
+  - gcloud --quiet config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
+  - gcloud auth configure-docker
 
 
 deploy:
   - provider: script
-    script: ./deploy.sh
+    script: bash ./deploy.sh
     skip_cleanup: true
     on:
       branch: service
