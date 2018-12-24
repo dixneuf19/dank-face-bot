@@ -1,3 +1,3 @@
-The Dank Face bot is reborn... Well soon. In Django.
+The Dank Face bot is reborn... Again.
 
-And host on heroku !
+Now as multiples micro-services, connected trough GRPC, hosted on Google Kubernetes Engine, built with Travis CI.
