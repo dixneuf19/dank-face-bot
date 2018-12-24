@@ -2,14 +2,12 @@
 
 FROM python:3.6-slim-stretch
 
-RUN apt-get -y update
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     gfortran \
     git \
     wget \
-    curl \
     graphicsmagick \
     libgraphicsmagick1-dev \
     libatlas-dev \
@@ -24,7 +22,7 @@ RUN apt-get install -y --fix-missing \
     python3-numpy \
     software-properties-common \
     zip \
-    && apt-get clean && rm -rf /tmp/* /var/tmp/*
+    && rm -rf /tmp/* /var/tmp/*
 
 RUN pip3 install numpy
 
