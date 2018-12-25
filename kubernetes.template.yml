@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: $KUBE_DEPLOYMENT_NAME
-        image: gcr.io/${PROJECT_NAME_PRD}/${DOCKER_IMAGE_NAME}:${TRAVIS_COMMIT}
+        image: gcr.io/${PROJECT_NAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_COMMIT}
         env:
             - name: TOKEN
               valueFrom:

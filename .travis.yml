@@ -15,10 +15,8 @@ services:
 env:
   global:
     - GOOGLE_APPLICATION_CREDENTIALS=~/gcloud-service-key.json
-    - PROJECT_NAME_STG=dixneuf19-gke
-    - CLUSTER_NAME_STG=your-first-cluster-1
-    - PROJECT_NAME_PRD=dixneuf19-gke
-    - CLUSTER_NAME_PRD=your-first-cluster-1
+    - PROJECT_NAME=dixneuf19-gke
+    - CLUSTER_NAME=your-first-cluster-1
     - CLOUDSDK_COMPUTE_ZONE=europe-west1-d
     - DOCKER_IMAGE_NAME=dank-face-bot
     - KUBE_DEPLOYMENT_NAME=dank-face-bot
@@ -46,9 +44,10 @@ before_deploy:
   - gcloud --quiet components update
   - gcloud --quiet components update kubectl
   - gcloud auth activate-service-account --key-file client-secret.json
-  - gcloud --quiet config set project $PROJECT_NAME_PRD
-  - gcloud --quiet config set container/cluster $CLUSTER_NAME_PRD
+  - gcloud --quiet config set project $PROJECT_NAME
+  - gcloud --quiet config set container/cluster $CLUSTER_NAME
   - gcloud --quiet config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
+  - gcloud --quiet container clusters get-credentials $CLUSTER_NAME
   - gcloud auth configure-docker
 
 

@@ -2,9 +2,9 @@
 
 set -e
 
-docker build -t gcr.io/${PROJECT_NAME_PRD}/${DOCKER_IMAGE_NAME}:${TRAVIS_COMMIT} .
+docker build -t gcr.io/${PROJECT_NAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_COMMIT} .
 
-docker push gcr.io/${PROJECT_NAME_PRD}/${DOCKER_IMAGE_NAME}:${TRAVIS_COMMIT}
+docker push gcr.io/${PROJECT_NAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_COMMIT}
 
 envsubst < kubernetes.template.yml > kubernetes.yml
 
