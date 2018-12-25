@@ -12,3 +12,5 @@ kubectl config view
 kubectl config current-context
 kubectl apply -f kubernetes.yml
 
+kubectl rollout status deployment "$KUBE_DEPLOYMENT_NAME"
+
