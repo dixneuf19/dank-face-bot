@@ -13,13 +13,15 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, RegexHandler
 import os
 from logzero import logger
+from services_grpc.insult_jmk import client as insult_jmk_client
 # import find_faces.process_pic as process_pic
 
 
 TOKEN = os.environ.get('TOKEN')
+INSULT_JMK_ADRESS = os.environ.get("INSULT_JMK_HOST", default="localhost") + ":50051"
 
 
 # Define a few command handlers. These usually take the two arguments bot and
@@ -39,6 +41,17 @@ def help(bot, update):
 def echo(bot, update):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
+
+def insult_jmk(bot, update, args=[], groups=("",)):
+    """insult jmk"""
+    name = groups[0]
+    if len(args) > 0:
+        name = args[0]
+
+    insult = insult_jmk_client.get_insult(INSULT_JMK_ADRESS, name)
+    logger.info("Replied '%s' to '%s'" % (insult, update.message.text))
+    update.message.reply_text(insult)
+
 
 # def dank_face(bot, update):
 #     """Send you back your image."""
@@ -86,6 +99,8 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("insult", insult_jmk, pass_args=True))
+    dp.add_handler(RegexHandler("(?i)(jmk|jean michel|gaston|jeanmich|jean-mich)", insult_jmk, pass_groups=True))
 
     # on noncommand i.e message - echo the message on Telegram
     # dp.add_handler(MessageHandler(Filters.text, echo))
