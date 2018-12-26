@@ -16,16 +16,29 @@ Create a virtualenv with `virtualenvwrapper`: `mkvirtualenv dank-face-bot` (make
 
 Install dependencies with `pip install -r requirements.txt`
 
+You need at least a *bot telegram token* to launch it. You also need to specify the host of the micro-services which will be used, if they're not hosted on the same machine.
+
 ```bash
 TOKEN=******bot-telegram-token*** INSULT_JMK_HOST=<IP_ADDRESS> python main.py
 ```
 
-## Add dependencies
+### Micro services
+
+Here are listed the micro-services DFB relies on. Without he only responds to `/help` and `/start`.
+
+## Insulter (or insult-JMK)
+
+[Insulter](https://www.github.com/dixneuf19/insult-jmk)
+A french insult generator, written in GO, exposed with GRPC.
+
+## Some development tips and remarks
+
+### Add dependencies
 
 Just `pip install <dep>` (activate the correct *virtualenv* with `workon dank-face-bot`).
 Then update `requirement.txt` with `pip freeze > requirement.txt`.
 
-## Create Travis secret
+### Create Travis secret
 
 ```bash
 travis encrypt-file client-secret.json
@@ -37,7 +50,7 @@ Then add at the a before
 openssl aes-256-cbc -K $encrypted_8301fcd250ef_key -iv $encrypted_8301fcd250ef_iv -in client-secret.json.enc -out client-secret.json -d
 ```
 
-## Fix path import issue for GRPC
+### Fix path import issue for GRPC
 
 There is an issue with the way `protoc` generate the pb files and `__init__.py`, which create a module.
 
