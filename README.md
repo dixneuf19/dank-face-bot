@@ -1,6 +1,6 @@
 # DankFaceBot repo
 
-[![Build Status](https://travis-ci.org/Dixneuf19/dank-face-bot.svg?branch=service)](https://travis-ci.org/Dixneuf19/dank-face-bot)
+[![Build Status](https://travis-ci.org/dixneuf19/dank-face-bot.svg?branch=service)](https://travis-ci.org/dixneuf19/dank-face-bot)
 
 The Dank Face bot is reborn... Again.
 
