@@ -8,6 +8,23 @@ Now as multiples micro-services, connected trough GRPC, hosted on Google Kuberne
 
 This repo only contains the bot part, which will call some other micro-services to function.
 
+## Launch
+
+Clone the repo `git clone git@github.com/dixneuf19/dank-face-bot.git`.
+
+Create a virtualenv with `virtualenvwrapper`: `mkvirtualenv dank-face-bot` (make sur you have python3 for your virtualenv).
+
+Install dependencies with `pip install -r requirements.txt`
+
+```bash
+TOKEN=******bot-telegram-token*** INSULT_JMK_HOST=<IP_ADDRESS> python main.py
+```
+
+## Add dependencies
+
+Just `pip install <dep>` (activate the correct *virtualenv* with `workon dank-face-bot`).
+Then update `requirement.txt` with `pip freeze > requirement.txt`.
+
 ## Create Travis secret
 
 ```bash
