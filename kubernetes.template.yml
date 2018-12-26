@@ -23,4 +23,6 @@ spec:
                 secretKeyRef:
                   name: telegram-token
                   key: token
+            - name: INSULT_JMK_HOST
+              value: insult-jmk-service
 
