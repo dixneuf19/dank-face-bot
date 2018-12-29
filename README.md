@@ -70,3 +70,9 @@ from . import insult_jmk_pb2 as insult__jmk__pb2
 ```
 
 This isn't a great solution however...
+
+### Create a secret on k8s
+
+```bash
+k create secret generic telegram-token --from-literal token=****token****
+```
