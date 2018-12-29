@@ -58,6 +58,10 @@ def insult_jmk(bot, update, args=[], groups=("",)):
     logger.info("Replied '%s' to '%s'" % (insult, update.message.text))
     update.message.reply_text(insult)
 
+def bonne_annee(bot, update):
+    from_user = update.message.from_user.first_name
+    update.message.reply_text("🎉🎉🎉\nBonne année %s !\n🥂🥂🥂\nDoot doot spam !\n🎊🎊🎊" % from_user)
+
 
 def dank_face(bot, update):
     """Send you back your image."""
@@ -117,7 +121,7 @@ def main():
     dp.add_handler(RegexHandler("(?i)(jmk|jean michel|gaston|jeanmich|jean-mich)", insult_jmk, pass_groups=True))
 
     # on noncommand i.e message - echo the message on Telegram
-    # dp.add_handler(MessageHandler(Filters.text, echo))
+    dp.add_handler(MessageHandler(Filters.text, bonne_annee))
     # log all errors
     dp.add_error_handler(error)
 
