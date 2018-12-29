@@ -31,6 +31,11 @@ Here are listed the micro-services DFB relies on. Without he only responds to `/
 [Insulter](https://www.github.com/dixneuf19/insult-jmk)
 A french insult generator, written in GO, exposed with GRPC.
 
+## Find Faces (or fuzzy-octo-disco)
+
+[Find Faces (or fuzzy-octo-disco)](https://www.github.com/dixneuf19/fuzzy-octo-disco)
+A wrapper around the excellent `face-recognition` python module. Find and extract faces from an image. Share a volume with *dank-face-bot* to avoid a heavy load on network traffic with GRPC.
+
 ## Some development tips and remarks
 
 ### Add dependencies
