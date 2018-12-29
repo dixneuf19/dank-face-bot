@@ -73,29 +73,24 @@ def dank_face(bot, update):
         
         for i in range(len(result.faces)):
             try:
+                # TODO: send as an album https://python-telegram-bot.readthedocs.io/en/stable/telegram.bot.html?highlight=album#telegram.Bot.send_media_group
                 update.message.reply_photo(photo=open(result.faces[i].path, 'rb'))
             except Exception as error:
                 logger.warn("Failed to send face %d : %s" % (i, error))
+                pass
+        
+        for i in range(len(result.faces)):
+            try:
+                # Remove the file
+                Path(result.faces[i].path).remove_p()
+            except Exception as error:
+                logger.debug("Failed to remove face %d : %s" % (i, error))
+                pass
+        
+        filePath.remove_p()
 
     except Exception as error:
         logger.error("Error in dank_face: %s" % error)
-    
-
-
-    # try:
-
-    #     
-    # except:
-    #     raise
-    # finally:
-    #     os.remove(fileName)
-
-    #     for i in range(len(new_pic)):
-    #         try:
-    #             os.remove(new_pic[i])
-    #         except:
-    #             pass
-
 
 
 def error(bot, update, error):
