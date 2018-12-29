@@ -16,12 +16,18 @@ bot.
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, RegexHandler
 import os
 from logzero import logger
+from path import Path
+
 from services_grpc.insult_jmk import client as insult_jmk_client
-# import find_faces.process_pic as process_pic
+from services_grpc.find_faces import client as find_faces_client
 
 
 TOKEN = os.environ.get('TOKEN')
-INSULT_JMK_ADRESS = os.environ.get("INSULT_JMK_HOST", default="localhost") + ":50051"
+INSULT_JMK_ADDRESS = os.environ.get("INSULT_JMK_HOST", default="localhost") + ":50051"
+
+FIND_FACES_ADDRESS = os.environ.get("FIND_FACES_HOST", default="localhost") + ":50051"
+FIND_FACES_PIC_FOLDER = os.environ.get("DOWNLOAD_FOLDER", default="/tmp")
+
 
 
 # Define a few command handlers. These usually take the two arguments bot and
@@ -48,45 +54,54 @@ def insult_jmk(bot, update, args=[], groups=("",)):
     if len(args) > 0:
         name = args[0]
 
-    insult = insult_jmk_client.get_insult(INSULT_JMK_ADRESS, name)
+    insult = insult_jmk_client.get_insult(INSULT_JMK_ADDRESS, name)
     logger.info("Replied '%s' to '%s'" % (insult, update.message.text))
     update.message.reply_text(insult)
 
 
-# def dank_face(bot, update):
-#     """Send you back your image."""
+def dank_face(bot, update):
+    """Send you back your image."""
+    try:
+        newPhoto = bot.get_file(update.message.photo[-1])
+        fileName = newPhoto.file_id + ".jpg"
+        filePath = Path(FIND_FACES_PIC_FOLDER) / Path(fileName)
+        newPhoto.download(filePath.abspath())
+        logger.info("Picture saved at %s" % filePath)
 
-#     newPhoto = bot.get_file(update.message.photo[-1])
-#     fileName = newPhoto.file_id + ".jpg"
-#     newPhoto.download(fileName)
+        result = find_faces_client.find_faces(host=FIND_FACES_ADDRESS, file_path=filePath.abspath())
+        logger.info("Found %d faces" % result.nb_faces)
+        
+        for i in range(len(result.faces)):
+            try:
+                update.message.reply_photo(photo=open(result.faces[i].path, 'rb'))
+            except Exception as error:
+                logger.warn("Failed to send face %d : %s" % (i, error))
 
-#     new_pic = process_pic.run_bot(fileName)
-#     logger.info("Find " + str(len(new_pic)) + " faces")
+    except Exception as error:
+        logger.error("Error in dank_face: %s" % error)
+    
 
-#     try:
 
-#         for i in range(len(new_pic)):
-#             try:
-#                 bot.send_photo(chat_id=update.message.chat_id, photo=open(new_pic[i], 'rb'))
-#             except:
-#                 pass
-#     except:
-#         raise
-#     finally:
-#         os.remove(fileName)
+    # try:
 
-#         for i in range(len(new_pic)):
-#             try:
-#                 os.remove(new_pic[i])
-#             except:
-#                 pass
+    #     
+    # except:
+    #     raise
+    # finally:
+    #     os.remove(fileName)
+
+    #     for i in range(len(new_pic)):
+    #         try:
+    #             os.remove(new_pic[i])
+    #         except:
+    #             pass
 
 
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, error)
-
+    logger.info("Entered in error function")
+    logger.warn('Update "%s" caused error "%s"', update, error)
 
 def main():
     """Start the bot."""
@@ -96,19 +111,23 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
+   
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("insult", insult_jmk, pass_args=True))
+
+    dp.add_handler(MessageHandler(Filters.photo, dank_face))
+
     dp.add_handler(RegexHandler("(?i)(jmk|jean michel|gaston|jeanmich|jean-mich)", insult_jmk, pass_groups=True))
 
     # on noncommand i.e message - echo the message on Telegram
     # dp.add_handler(MessageHandler(Filters.text, echo))
-
-    # dp.add_handler(MessageHandler(Filters.photo, dank_face))
-
     # log all errors
     dp.add_error_handler(error)
+
+
+
 
     # Start the Bot
     updater.start_polling()
