@@ -27,6 +27,8 @@ spec:
               value: insult-jmk-service
             - name: FIND_FACES_HOST
               value: find-faces-service
+            - name: DOWNLOAD_FOLDER
+              value: "/mnt" # TODO: use a config map
         volumeMounts:
           # name must match the volume name below
           - name: my-pvc-nfs
