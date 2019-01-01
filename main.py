@@ -118,10 +118,10 @@ def main():
 
     dp.add_handler(MessageHandler(Filters.photo, dank_face))
 
-    dp.add_handler(RegexHandler("(?i)(jmk|jean michel|gaston|jeanmich|jean-mich)", insult_jmk, pass_groups=True))
+    # dp.add_handler(RegexHandler("(?i)(jmk|jean michel|gaston|jeanmich|jean-mich)", insult_jmk, pass_groups=True))
 
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, bonne_annee))
+    # dp.add_handler(MessageHandler(Filters.text, bonne_annee))
     # log all errors
     dp.add_error_handler(error)
 
