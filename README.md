@@ -32,6 +32,16 @@ If this is the first deploy, it's a bit more complex. Configure your `gcloud` CL
 gcloud gcloud container clusters get-credentials $CLUSTER_NAME
 ```
 
+Then you probably need two manual action before letting *Travis* do the job.
+
+First, add the **Telegram Token secret** to the GKE cluster. See [this topic](###Create-a-secret-on-k8s).
+
+Then, you need to create the nfs volume for the [face recognition](https://github.com/dixneuf19/fuzzy-octo-disco) part, otherwise it will fail (TODO: make this optional for the bot):
+
+```bash
+k apply -f nfs-server.yml
+```
+
 For a local one time deploy, you can use the `deploy.sh` script, with the correct environment variables, after having locally built the image.
 
 ```bash
