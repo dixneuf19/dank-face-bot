@@ -22,16 +22,32 @@ You need at least a *bot telegram token* to launch it. You also need to specify 
 TOKEN=******bot-telegram-token*** INSULT_JMK_HOST=<IP_ADDRESS> python main.py
 ```
 
-### Micro services
+## Deploy on k8s
+
+It uses the Travis script, update `.travis.yml` with the correct cluster configuration.
+
+If this is the first deploy, it's a bit more complex. Configure your `gcloud` CLI access correctly, then get the *cluster credentials* with
+
+```bash
+gcloud gcloud container clusters get-credentials $CLUSTER_NAME
+```
+
+For a local one time deploy, you can use the `deploy.sh` script, with the correct environment variables, after having locally built the image.
+
+```bash
+PROJECT_NAME= ...
+```
+
+## Micro services
 
 Here are listed the micro-services DFB relies on. Without he only responds to `/help` and `/start`.
 
-## Insulter (or insult-JMK)
+### Insulter (or insult-JMK)
 
 [Insulter](https://www.github.com/dixneuf19/insult-jmk)
 A french insult generator, written in GO, exposed with GRPC.
 
-## Find Faces (or fuzzy-octo-disco)
+### Find Faces (or fuzzy-octo-disco)
 
 [Find Faces (or fuzzy-octo-disco)](https://www.github.com/dixneuf19/fuzzy-octo-disco)
 A wrapper around the excellent `face-recognition` python module. Find and extract faces from an image. Share a volume with *dank-face-bot* to avoid a heavy load on network traffic with GRPC.
