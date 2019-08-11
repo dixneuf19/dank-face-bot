@@ -53,7 +53,9 @@ def insult_jmk(bot, update, args=[], groups=("",)):
     name = groups[0]
     if len(args) > 0:
         name = args[0]
-
+    
+    logger.info('Received /insult command from %s' % update.message.from_user.username)
+    
     insult = insult_jmk_client.get_insult(INSULT_JMK_ADDRESS, name)
     logger.info("Replied '%s' to '%s'" % (insult, update.message.text))
     update.message.reply_text(insult)
