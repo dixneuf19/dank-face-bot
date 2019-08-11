@@ -1,0 +1,9 @@
+version: '3'
+services:
+  dank-face-bot:
+    image: dank-face-bot
+    environment:
+      TOKEN: "${TOKEN}"
+      INSULT_JMK_HOST: "insult-jmk"
+  insult-jmk:
+    image: insult-jmk
