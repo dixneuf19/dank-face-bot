@@ -4,7 +4,7 @@
 
 The Dank Face bot is reborn... Again.
 
-Now as multiples micro-services, connected trough GRPC, hosted on Google Kubernetes Engine, built with Travis CI.
+Now as multiples micro-services, connected trough GRPC, hosted on Google Kubernetes Engine, built with Travis CI. There is also an option for local deployment with *docker-compose*.
 
 This repo only contains the bot part, which will call some other micro-services to function.
 
@@ -107,3 +107,20 @@ This isn't a great solution however...
 ```bash
 k create secret generic telegram-token --from-literal token=****token****
 ```
+
+## Local deployment with docker-compose
+
+Instead of a complicated and quite expensive Kubernetes cluster, you can also run it locally on a VM or you desktop.
+
+You need to clone the selected services along the main *dank-face-bot* repositery :
+
+```bash
+your-project-path/
+            ./dank-face-bot/
+            ./fuzzy-octo-disco/
+            ./insult-jmk/
+```
+
+The path to build this services are relative from `dank-face-bot/` folder in the `docker-compose.yml` file, you can comment out a service if it's not used.
+
+Specify the TOKEN in a `.env` file : `echo "TOKEN=******bot-telegram-token***" >> .env` and just run `docker-compose up` in the *dank-face-bot* folder.

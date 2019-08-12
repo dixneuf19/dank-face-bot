@@ -1,9 +1,25 @@
 version: '3'
 services:
   dank-face-bot:
+    build: .
     image: dank-face-bot
     environment:
       TOKEN: "${TOKEN}"
       INSULT_JMK_HOST: "insult-jmk"
+      FIND_FACES_HOST: "fuzzy-octo-disco"
+    volumes:
+      - pictures:/tmp
+
   insult-jmk:
+    build: ../insult-jmk/.
     image: insult-jmk
+    
+  fuzzy-octo-disco:
+    build: ../fuzzy-octo-disco/.
+    image: fuzzy-octo-disco
+    environment:
+      FACE_CROP_MARGIN: "-0.075"
+    volumes:
+      - pictures:/tmp
+volumes:
+  pictures:
