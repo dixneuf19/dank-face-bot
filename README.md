@@ -8,12 +8,12 @@ Dank Face bot is a small architecture project, which takes pictures and return t
 
 First as a simple and dirty python project, it's now separated into three micro-services :
 - dank-face-bot: the Telegram bot part, which receives and process the different messages from Telegram. It then dispatch the commands to two other micro-services.
-- fuzzy-octo-disco (Find Faces) : the part which actually does some ML and image manipulation. Scrapped from an old school project, it use two python libraries to find faces and then crop the image around the faces.
-- insult-jmk : Well... Just a small Go project to demonstrate my micro-services architecture. Generate small french insults.
+- [fuzzy-octo-disco](https://www.github.com/dixneuf19/fuzzy-octo-disco) (Find Faces) : the part which actually does some ML and image manipulation. Scrapped from an old school project, it use two python libraries to find faces and then crop the image around the faces.
+- [insult-jmk]((https://www.github.com/dixneuf19/insult-jmk) : Well... Just a small Go project to demonstrate my micro-services architecture. Generate small french insults.
 
 Theses services are connected trough GRPC.
 They *were* hosted on Google Kubernetes Engine, built with Travis CI.
-But today, for cost issues, I just use on a local machine with *docker-compose*.
+But today, for cost issues, I just use it on a local machine with *docker-compose*.
 
 This repo only contains the bot part, which will call some other micro-services to function.
 
@@ -47,7 +47,7 @@ Then you probably need two manual action before letting *Travis* do the job.
 
 First, add the **Telegram Token secret** to the GKE cluster. See [this topic](###Create-a-secret-on-k8s).
 
-Then, you need to create the nfs volume for the [face recognition](https://github.com/dixneuf19/fuzzy-octo-disco) part, otherwise it will fail (TODO: make this optional for the bot):
+Then, you need to create the nfs volume for the [face recognition](https://www.github.com/dixneuf19/fuzzy-octo-disco) part, otherwise it will fail (TODO: make this optional for the bot):
 
 ```bash
 k apply -f nfs-server.yml
