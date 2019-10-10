@@ -9,7 +9,7 @@ Dank Face bot is a small architecture project, which takes pictures and return t
 First as a simple and dirty python project, it's now separated into three micro-services :
 - dank-face-bot: the Telegram bot part, which receives and process the different messages from Telegram. It then dispatch the commands to two other micro-services.
 - [fuzzy-octo-disco](https://www.github.com/dixneuf19/fuzzy-octo-disco) (Find Faces) : the part which actually does some ML and image manipulation. Scrapped from an old school project, it use two python libraries to find faces and then crop the image around the faces.
-- [insult-jmk]((https://www.github.com/dixneuf19/insult-jmk) : Well... Just a small Go project to demonstrate my micro-services architecture. Generate small french insults.
+- [insult-jmk](https://www.github.com/dixneuf19/insult-jmk) : Well... Just a small Go project to demonstrate my micro-services architecture. Generate small french insults.
 
 Theses services are connected trough GRPC.
 They *were* hosted on Google Kubernetes Engine, built with Travis CI.
