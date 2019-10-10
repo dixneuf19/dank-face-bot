@@ -4,7 +4,16 @@
 
 The Dank Face bot is reborn... Again.
 
-Now as multiples micro-services, connected trough GRPC, hosted on Google Kubernetes Engine, built with Travis CI. There is also an option for local deployment with *docker-compose*.
+Dank Face bot is a small architecture project, which takes pictures and return the cropped faces it found on the pictures.
+
+First as a simple and dirty python project, it's now separated into three micro-services :
+- dank-face-bot: the Telegram bot part, which receives and process the different messages from Telegram. It then dispatch the commands to two other micro-services.
+- fuzzy-octo-disco (Find Faces) : the part which actually does some ML and image manipulation. Scrapped from an old school project, it use two python libraries to find faces and then crop the image around the faces.
+- insult-jmk : Well... Just a small Go project to demonstrate my micro-services architecture. Generate small french insults.
+
+Theses services are connected trough GRPC.
+They *were* hosted on Google Kubernetes Engine, built with Travis CI.
+But today, for cost issues, I just use on a local machine with *docker-compose*.
 
 This repo only contains the bot part, which will call some other micro-services to function.
 
@@ -21,6 +30,8 @@ You need at least a *bot telegram token* to launch it. You also need to specify 
 ```bash
 TOKEN=******bot-telegram-token*** INSULT_JMK_HOST=<IP_ADDRESS> python main.py
 ```
+
+You can also use `.env`.
 
 ## Deploy on k8s
 
