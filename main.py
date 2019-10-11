@@ -54,6 +54,8 @@ def echo(bot, update):
 
 def insult_jmk(bot, update, args=[], groups=("",)):
     """insult jmk"""
+    logger.info(f"Received an insult request from '{update.message.from_user.name}' in chat '{update.message.chat.title}'")
+
     name = groups[0]
     if len(args) > 0:
         name = args[0]
@@ -71,6 +73,7 @@ def bonne_annee(bot, update):
 
 def dank_face(bot, update):
     """Send you back your image."""
+    logger.info(f"Received a image from '{update.message.from_user.name}' in chat '{update.message.chat.title}'")
     try:
         newPhoto = bot.get_file(update.message.photo[-1])
         fileName = newPhoto.file_id + ".jpg"
