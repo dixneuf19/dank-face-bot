@@ -17,6 +17,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Regex
 import os
 from logzero import logger
 from path import Path
+from random import randint
 
 from services_grpc.insult_jmk import client as insult_jmk_client
 from services_grpc.find_faces import client as find_faces_client
@@ -28,7 +29,9 @@ INSULT_JMK_ADDRESS = os.environ.get("INSULT_JMK_HOST", default="localhost") + ":
 FIND_FACES_ADDRESS = os.environ.get("FIND_FACES_HOST", default="localhost") + ":50051"
 FIND_FACES_PIC_FOLDER = os.environ.get("DOWNLOAD_FOLDER", default="/tmp")
 
-DEFAULT_TIMEOUT = os.environ.get("DEFAULT_TIMEOUT", default="20")
+print()
+
+DEFAULT_TIMEOUT = int(os.environ.get("DEFAULT_TIMEOUT", default="20"))
 
 
 # Define a few command handlers. These usually take the two arguments bot and
@@ -81,7 +84,7 @@ def dank_face(bot, update):
         for i in range(len(result.faces)):
             try:
                 # TODO: send as an album https://python-telegram-bot.readthedocs.io/en/stable/telegram.bot.html?highlight=album#telegram.Bot.send_media_group
-                update.message.reply_photo(photo=open(result.faces[i].path, 'rb', timeout=DEFAULT_TIMEOUT))
+                update.message.reply_photo(photo=open(result.faces[i].path, 'rb'), timeout=DEFAULT_TIMEOUT)
             except Exception as error:
                 logger.warn("Failed to send face %d : %s" % (i, error))
                 pass
@@ -94,6 +97,10 @@ def dank_face(bot, update):
                 logger.debug("Failed to remove face %d : %s" % (i, error))
                 pass
         
+        if len(result.faces) == 0:
+            dog_number = randint(1, 43)
+            update.message.reply_photo(photo=open(f"./amazon_dogs/{dog_number}.-TTD-c.jpg", 'rb'), caption="Sorry, didn't find any faces 😢", timeout=DEFAULT_TIMEOUT)
+
         filePath.remove_p()
 
     except Exception as error:

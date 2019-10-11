@@ -7,6 +7,7 @@ services:
       TOKEN: "${TOKEN}"
       INSULT_JMK_HOST: "insult-jmk"
       FIND_FACES_HOST: "fuzzy-octo-disco"
+      DEFAULT_TIMEOUT: "${DEFAULT_TIMEOUT}"
     volumes:
       - pictures:/tmp
 
