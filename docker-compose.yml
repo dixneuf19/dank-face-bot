@@ -2,6 +2,9 @@ version: '3'
 services:
   dank-face-bot:
     build: .
+    depends_on: 
+      - insult-jmk
+      - fuzzy-octo-disco
     image: dank-face-bot
     environment:
       TOKEN: "${TOKEN}"
