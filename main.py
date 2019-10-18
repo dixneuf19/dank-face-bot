@@ -14,7 +14,7 @@ bot.
 """
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, RegexHandler
-import os
+import os, time
 from logzero import logger
 from path import Path
 from random import randint
@@ -81,7 +81,23 @@ def dank_face(bot, update):
         newPhoto.download(filePath.abspath())
         logger.info("Picture saved at %s" % filePath)
 
-        result = find_faces_client.find_faces(host=FIND_FACES_ADDRESS, file_path=filePath.abspath())
+        max_try = 5
+        wait_between_try_ms = 1
+        nb_try = 0
+        result = None
+
+        while result is None and nb_try < max_try:
+            try:
+                result = find_faces_client.find_faces(host=FIND_FACES_ADDRESS, file_path=filePath.abspath())
+            except:
+                logger.debug("Retry to send the photo to find_faces")
+                result = None
+                nb_try += 1
+                time.sleep(wait_between_try_ms)
+            finally:
+                if max_try == nb_try and result == None:
+                    raise Exception("Unable to contact find_faces service trough gRPC")
+            
         logger.info("Found %d faces" % result.nb_faces)
         
         for i in range(len(result.faces)):
