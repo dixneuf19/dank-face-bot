@@ -105,7 +105,7 @@ def dank_face(bot, update):
                 # TODO: send as an album https://python-telegram-bot.readthedocs.io/en/stable/telegram.bot.html?highlight=album#telegram.Bot.send_media_group
                 update.message.reply_photo(photo=open(result.faces[i].path, 'rb'), timeout=DEFAULT_TIMEOUT)
             except Exception as error:
-                logger.warn("Failed to send face %d : %s" % (i, error))
+                logger.warning("Failed to send face %d : %s" % (i, error))
                 pass
         
         for i in range(len(result.faces)):
@@ -129,7 +129,7 @@ def dank_face(bot, update):
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.info("Entered in error function")
-    logger.warn('Update "%s" caused error "%s"', update, error)
+    logger.warning('Update "%s" caused error "%s"', update, error)
 
 def main():
     """Start the bot."""
