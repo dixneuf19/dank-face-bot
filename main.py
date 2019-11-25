@@ -14,6 +14,7 @@ bot.
 """
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, RegexHandler
+from telegram.parsemode import ParseMode
 import os, time
 from logzero import logger
 from path import Path
@@ -22,58 +23,80 @@ from random import randint
 from services_grpc.insult_jmk import client as insult_jmk_client
 from services_grpc.find_faces import client as find_faces_client
 
+from dotenv import load_dotenv
 
-TOKEN = os.environ.get('TOKEN')
-INSULT_JMK_ADDRESS = os.environ.get("INSULT_JMK_HOST", default="localhost") + ":50051"
+load_dotenv()
 
-FIND_FACES_ADDRESS = os.environ.get("FIND_FACES_HOST", default="localhost") + ":50051"
-FIND_FACES_PIC_FOLDER = os.environ.get("DOWNLOAD_FOLDER", default="/tmp")
+TOKEN = os.getenv("TOKEN")
+INSULT_JMK_ADDRESS = os.getenv("INSULT_JMK_HOST", default="localhost") + ":50051"
 
-print()
+FIND_FACES_ADDRESS = os.getenv("FIND_FACES_HOST", default="localhost") + ":50051"
+FIND_FACES_PIC_FOLDER = os.getenv("DOWNLOAD_FOLDER", default="/tmp")
 
-DEFAULT_TIMEOUT = int(os.environ.get("DEFAULT_TIMEOUT", default="20"))
+
+DEFAULT_TIMEOUT = int(os.getenv("DEFAULT_TIMEOUT", default="20"))
 
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """Send a message when the command /start is issued."""
-    logger.info('Received /start command from %s' % update.message.from_user.username)
-    update.message.reply_text('Hi!')
+    logger.info("Received /start command from %s" % update.message.from_user.username)
+    update.message.reply_text("Hi!")
 
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    logger.info('Received /help command from %s' % update.message.from_user.username)
-    update.message.reply_text('DANK FACE BOT')
+    logger.info("Received /help command from %s" % update.message.from_user.username)
+    update.message.reply_text("DANK FACE BOT")
 
 
 def echo(bot, update):
     """Echo the user message."""
     update.message.reply_text(update.message.text)
 
+
 def insult_jmk(bot, update, args=[], groups=("",)):
     """insult jmk"""
-    logger.info(f"Received an insult request from '{update.message.from_user.name}' in chat '{update.message.chat.title}'")
+    logger.info(
+        f"Received an insult request from '{update.message.from_user.name}' in chat '{update.message.chat.title}'"
+    )
 
     name = groups[0]
     if len(args) > 0:
         name = args[0]
-    
-    logger.info('Received /insult command from %s' % update.message.from_user.username)
-    
+
+    logger.info("Received /insult command from %s" % update.message.from_user.username)
+
     insult = insult_jmk_client.get_insult(INSULT_JMK_ADDRESS, name)
     logger.info("Replied '%s' to '%s'" % (insult, update.message.text))
     update.message.reply_text(insult)
 
+
 def bonne_annee(bot, update):
     from_user = update.message.from_user.first_name
-    update.message.reply_text("🎉🎉🎉\nBonne année %s !\n🥂🥂🥂\nDoot doot spam !\n🎊🎊🎊" % from_user)
+    update.message.reply_text(
+        "🎉🎉🎉\nBonne année %s !\n🥂🥂🥂\nDoot doot spam !\n🎊🎊🎊" % from_user
+    )
+
+
+def honk(bot, update):
+    logger.info(
+        f"Received an honk request from '{update.message.from_user.name}' in chat '{update.message.chat.title}'"
+    )
+    update.message.reply_audio(
+        audio=open("audio/honk.mp3", "rb"),
+        title="HONK!",
+        performer="HONK!",
+        caption="HONK! HONK! HONK!",
+    )
 
 
 def dank_face(bot, update):
     """Send you back your image."""
-    logger.info(f"Received a image from '{update.message.from_user.name}' in chat '{update.message.chat.title}'")
+    logger.info(
+        f"Received a image from '{update.message.from_user.name}' in chat '{update.message.chat.title}'"
+    )
     try:
         newPhoto = bot.get_file(update.message.photo[-1])
         fileName = newPhoto.file_id + ".jpg"
@@ -88,7 +111,9 @@ def dank_face(bot, update):
 
         while result is None and nb_try < max_try:
             try:
-                result = find_faces_client.find_faces(host=FIND_FACES_ADDRESS, file_path=filePath.abspath())
+                result = find_faces_client.find_faces(
+                    host=FIND_FACES_ADDRESS, file_path=filePath.abspath()
+                )
             except:
                 logger.debug("Retry to send the photo to find_faces")
                 result = None
@@ -97,17 +122,19 @@ def dank_face(bot, update):
             finally:
                 if max_try == nb_try and result == None:
                     raise Exception("Unable to contact find_faces service trough gRPC")
-            
+
         logger.info("Found %d faces" % result.nb_faces)
-        
+
         for i in range(len(result.faces)):
             try:
                 # TODO: send as an album https://python-telegram-bot.readthedocs.io/en/stable/telegram.bot.html?highlight=album#telegram.Bot.send_media_group
-                update.message.reply_photo(photo=open(result.faces[i].path, 'rb'), timeout=DEFAULT_TIMEOUT)
+                update.message.reply_photo(
+                    photo=open(result.faces[i].path, "rb"), timeout=DEFAULT_TIMEOUT
+                )
             except Exception as error:
                 logger.warning("Failed to send face %d : %s" % (i, error))
                 pass
-        
+
         for i in range(len(result.faces)):
             try:
                 # Remove the file
@@ -115,10 +142,14 @@ def dank_face(bot, update):
             except Exception as error:
                 logger.debug("Failed to remove face %d : %s" % (i, error))
                 pass
-        
+
         if len(result.faces) == 0:
             dog_number = randint(1, 43)
-            update.message.reply_photo(photo=open(f"./amazon_dogs/{dog_number}.-TTD-c.jpg", 'rb'), caption="Sorry, didn't find any faces 😢", timeout=DEFAULT_TIMEOUT)
+            update.message.reply_photo(
+                photo=open(f"./amazon_dogs/{dog_number}.-TTD-c.jpg", "rb"),
+                caption="Sorry, didn't find any faces 😢",
+                timeout=DEFAULT_TIMEOUT,
+            )
 
         filePath.remove_p()
 
@@ -131,6 +162,7 @@ def error(bot, update, error):
     logger.info("Entered in error function")
     logger.warning('Update "%s" caused error "%s"', update, error)
 
+
 def main():
     """Start the bot."""
     # Create the EventHandler and pass it your bot's token.
@@ -139,11 +171,11 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-   
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("insult", insult_jmk, pass_args=True))
+    dp.add_handler(CommandHandler("honk", honk))
 
     dp.add_handler(MessageHandler(Filters.photo, dank_face))
 
@@ -153,9 +185,6 @@ def main():
     # dp.add_handler(MessageHandler(Filters.text, bonne_annee))
     # log all errors
     dp.add_error_handler(error)
-
-
-
 
     # Start the Bot
     updater.start_polling()
@@ -168,6 +197,5 @@ def main():
     logger.info("Dank Face Bot stopped")
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
