@@ -5,7 +5,7 @@ services:
     depends_on: 
       - insult-jmk
       - fuzzy-octo-disco
-    image: dank-face-bot
+    image: dixneuf19/dank-face-bot
     environment:
       TOKEN: "${TOKEN}"
       INSULT_JMK_HOST: "insult-jmk"
@@ -16,11 +16,11 @@ services:
 
   insult-jmk:
     build: ../insult-jmk/.
-    image: insult-jmk
+    image: dixneuf19/insult-jmk
     
   fuzzy-octo-disco:
     build: ../fuzzy-octo-disco/.
-    image: fuzzy-octo-disco
+    image: dixneuf19/find-faces
     environment:
       FACE_CROP_MARGIN: "-0.075"
     volumes:

@@ -85,9 +85,7 @@ def honk(bot, update):
         f"Received an honk request from '{update.message.from_user.name}' in chat '{update.message.chat.title}'"
     )
     update.message.reply_audio(
-        audio=open("audio/honk.mp3", "rb"),
-        title="HONK!",
-        performer="HONK!",
+        audio="CQADBAAD6wcAAnjc4FJqI-mRCqD8nRYE",
         caption="HONK! HONK! HONK!",
     )
 
