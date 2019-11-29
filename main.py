@@ -153,6 +153,9 @@ def dank_face(bot, update):
 
     except Exception as error:
         logger.error("Error in dank_face: %s" % error)
+        if "Not enough rights to send photos to the chat" in str(error):
+            update.message.reply("Give me right to send photos or kick me!")
+
 
 
 def error(bot, update, error):
