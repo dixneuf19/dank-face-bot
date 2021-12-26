@@ -1,5 +1,13 @@
 # DankFaceBot repo
 
+The Dank Face bot is reborn... Again, again !
+
+Without gRPC this time.
+
+**TODO**: Documentation
+
+# Deprecated
+
 [![Build Status](https://travis-ci.org/dixneuf19/dank-face-bot.svg?branch=master)](https://travis-ci.org/dixneuf19/dank-face-bot)
 
 The Dank Face bot is reborn... Again.

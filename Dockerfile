@@ -1,10 +1,9 @@
-FROM python:3
+FROM python:3.9-buster
 
-WORKDIR /usr/src/app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY amazon_dogs/ amazon_dogs/
+COPY main.py .
 
-COPY . .
-
-CMD [ "python", "./main.py" ]
+CMD ["python", "main.py"]
