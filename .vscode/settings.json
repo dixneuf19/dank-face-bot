@@ -1,4 +1,0 @@
-{
-    "python.formatting.provider": "black",
-    "python.pythonPath": "${env:HOME}/.virtualenvs/dank-face-bot/bin/python"
-}
