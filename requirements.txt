@@ -1,5 +1,5 @@
 loguru==0.5.3
 path==16.2.0
 python-dotenv==0.19.2
-python-telegram-bot==13.9
+python-telegram-bot==13.10
 requests==2.26.0
