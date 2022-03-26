@@ -1,4 +1,4 @@
-loguru==0.5.3
+loguru==0.6.0
 path==16.2.0
 python-dotenv==0.20.0
 python-telegram-bot==13.10
