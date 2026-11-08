@@ -3,9 +3,9 @@
 
 """Simple Bot to reply to Telegram messages.
 This program is dedicated to the public domain under the CC0 license.
-This Bot uses the Updater class to handle the bot.
+This Bot uses the Application class to handle the bot.
 First, a few handler functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
+the Application and registered at their respective places.
 Then, the bot is started and runs until we press Ctrl-C on the command line.
 Usage:
 Basic Echobot example, repeats messages.
@@ -13,6 +13,7 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
+import asyncio
 import os
 import time
 from random import randint
@@ -24,11 +25,11 @@ from path import Path
 from requests.exceptions import HTTPError
 from telegram import ForceReply, Update
 from telegram.ext import (
-    CallbackContext,
+    Application,
     CommandHandler,
-    Filters,
+    ContextTypes,
     MessageHandler,
-    Updater,
+    filters,
 )
 
 load_dotenv()
@@ -47,24 +48,24 @@ HONK_FILE_ID = os.getenv(
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
-def start(update: Update, context: CallbackContext):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send a message when the command /start is issued."""
     logger.info("Received /start command from %s" % update.message.from_user.username)
-    update.message.reply_text("Hi!")
+    await update.message.reply_text("Hi!")
 
 
-def help(update: Update, context: CallbackContext):
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send a message when the command /help is issued."""
     logger.info("Received /help command from %s" % update.message.from_user.username)
-    update.message.reply_text("DANK FACE BOT")
+    await update.message.reply_text("DANK FACE BOT")
 
 
-def echo(update: Update, context: CallbackContext):
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Echo the user message."""
-    update.message.reply_text(update.message.text)
+    await update.message.reply_text(update.message.text)
 
 
-# def insult_jmk(update: Update, context: CallbackContext, args=[], groups=("",)):
+# def insult_jmk(update: Update, context: ContextTypes.DEFAULT_TYPE, args=[], groups=("",)):
 #     """insult jmk"""
 #     logger.info(
 #         f"Received an insult request from '{update.message.from_user.name}' in chat '{update.message.chat.title}'"
@@ -81,38 +82,40 @@ def echo(update: Update, context: CallbackContext):
 #     update.message.reply_text(insult)
 
 
-def bonne_annee(update: Update, context: CallbackContext):
+async def bonne_annee(update: Update, context: ContextTypes.DEFAULT_TYPE):
     from_user = update.message.from_user.first_name
-    update.message.reply_text(
+    await update.message.reply_text(
         "🎉🎉🎉\nBonne année %s !\n🥂🥂🥂\nDoot doot spam !\n🎊🎊🎊" % from_user
     )
 
 
-def honk(update: Update, context: CallbackContext):
+async def honk(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info(
         f"Received an honk request from '{update.message.from_user.name}' in chat '{update.message.chat.title}'"
     )
-    update.message.reply_audio(
+    await update.message.reply_audio(
         audio=HONK_FILE_ID,
         caption="HONK! HONK! HONK!",
     )
 
 
-def dank_face(update: Update, context: CallbackContext):
+async def dank_face(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send you back your image."""
     logger.info(
         f"Received a image from '{update.message.from_user.name}' in chat '{update.message.chat.title}'"
     )
     try:
-        newPhoto = update.message.photo[-1].get_file()
+        newPhoto = await update.message.photo[-1].get_file()
         fileName = newPhoto.file_id + ".jpg"
         filePath = Path(FIND_FACES_PIC_FOLDER) / Path(fileName)
-        newPhoto.download(filePath.abspath())
+        await newPhoto.download_to_drive(filePath.abspath())
         logger.info("Picture saved at %s" % filePath)
 
         try:
-            res = requests.get(
-                f"{FUZZY_OCTO_DISCO_ADDRESS}/faces", params={"pic_path": filePath}
+            res = await asyncio.to_thread(
+                requests.get,
+                f"{FUZZY_OCTO_DISCO_ADDRESS}/faces",
+                params={"pic_path": filePath},
             )
             res.raise_for_status()
             result = res.json()
@@ -121,9 +124,10 @@ def dank_face(update: Update, context: CallbackContext):
                 for i in range(int(result["nbFaces"])):
                     try:
                         # TODO: send as an album https://python-telegram-bot.readthedocs.io/en/stable/telegram.bot.html?highlight=album#telegram.Bot.send_media_group
-                        update.message.reply_photo(
+                        await update.message.reply_photo(
                             photo=open(result["paths"][i], "rb"),
-                            timeout=DEFAULT_TIMEOUT,
+                            read_timeout=DEFAULT_TIMEOUT,
+                            write_timeout=DEFAULT_TIMEOUT,
                         )
                     except Exception as error:
                         logger.warning("Failed to send face %d : %s" % (i, error))
@@ -138,10 +142,11 @@ def dank_face(update: Update, context: CallbackContext):
 
             elif result["status"] in ("NO_FACE_FOUND", "FAILED_ALL_FACES"):
                 dog_number = randint(1, 43)
-                update.message.reply_photo(
+                await update.message.reply_photo(
                     photo=open(f"./amazon_dogs/{dog_number}.-TTD-c.jpg", "rb"),
                     caption="Sorry, didn't find any faces 😢",
-                    timeout=DEFAULT_TIMEOUT,
+                    read_timeout=DEFAULT_TIMEOUT,
+                    write_timeout=DEFAULT_TIMEOUT,
                 )
             else:
                 logger.warning(
@@ -156,12 +161,12 @@ def dank_face(update: Update, context: CallbackContext):
     except Exception as error:
         logger.error("Error in dank_face: %s" % error)
         if "Not enough rights to send photos to the chat" in str(error):
-            update.message.reply("Give me right to send photos or kick me!")
+            await update.message.reply_text("Give me right to send photos or kick me!")
         else:
             raise error
 
 
-def error_handler(update: object, context: CallbackContext):
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
     """Log Errors caused by Updates."""
     logger.info("Entered in error function")
     logger.warning(f"Update {update} caused error {context.error}")
@@ -169,11 +174,8 @@ def error_handler(update: object, context: CallbackContext):
 
 def main():
     """Start the bot."""
-    # Create the EventHandler and pass it your bot's token.
-    updater = Updater(TELEGRAM_TOKEN)
-
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
+    # Create the Application and pass it your bot's token.
+    dp = Application.builder().token(TELEGRAM_TOKEN).build()
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
@@ -181,23 +183,19 @@ def main():
     # dp.add_handler(CommandHandler("insult", insult_jmk, pass_args=True))
     dp.add_handler(CommandHandler("honk", honk))
 
-    dp.add_handler(MessageHandler(Filters.photo, dank_face))
+    dp.add_handler(MessageHandler(filters.PHOTO, dank_face))
 
     # dp.add_handler(RegexHandler("(?i)(jmk|jean michel|gaston|jeanmich|jean-mich)", insult_jmk, pass_groups=True))
 
     # on noncommand i.e message - echo the message on Telegram
-    # dp.add_handler(MessageHandler(Filters.text, bonne_annee))
+    # dp.add_handler(MessageHandler(filters.TEXT, bonne_annee))
     # log all errors
     dp.add_error_handler(error_handler)
 
-    # Start the Bot
-    updater.start_polling()
-
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
+    # SIGTERM or SIGABRT.
     logger.info("Dank Face Bot is launched !")
-    updater.idle()
+    dp.run_polling()
     logger.info("Dank Face Bot stopped")
 
 
