@@ -175,7 +175,16 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
 def main():
     """Start the bot."""
     # Create the Application and pass it your bot's token.
-    dp = Application.builder().token(TELEGRAM_TOKEN).build()
+    # The library defaults to 5 s, too short for get_file on forwarded photos
+    dp = (
+        Application.builder()
+        .token(TELEGRAM_TOKEN)
+        .connect_timeout(DEFAULT_TIMEOUT)
+        .read_timeout(DEFAULT_TIMEOUT)
+        .write_timeout(DEFAULT_TIMEOUT)
+        .media_write_timeout(DEFAULT_TIMEOUT)
+        .build()
+    )
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
