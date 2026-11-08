@@ -1,0 +1,27 @@
+name: Lint and test
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: python:3.14-slim
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Install make
+        run: apt-get update && apt-get install -y --no-install-recommends make
+
+      - name: Install dependencies
+        run: make install-dev
+
+      - name: Check format
+        run: make check-format
+
+      - name: Run tests
+        run: make test
