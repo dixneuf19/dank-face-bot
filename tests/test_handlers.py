@@ -13,11 +13,14 @@ def test_main_registers_handlers(monkeypatch):
     def fake_run_polling(self, *a, **k):
         captured["handlers"] = self.handlers
         captured["errors"] = self.error_handlers
+        captured["request"] = self.bot.request
 
     monkeypatch.setattr(Application, "run_polling", fake_run_polling)
     main.main()
     assert len(captured["handlers"][0]) == 4
     assert len(captured["errors"]) == 1
+    # get_file and downloads use these, not the library's 5 s default
+    assert captured["request"].read_timeout == main.DEFAULT_TIMEOUT
 
 
 def test_dank_face_no_face(monkeypatch, tmp_path):
