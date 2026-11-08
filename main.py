@@ -108,7 +108,7 @@ async def dank_face(update: Update, context: ContextTypes.DEFAULT_TYPE):
         newPhoto = await update.message.photo[-1].get_file()
         fileName = newPhoto.file_id + ".jpg"
         filePath = Path(FIND_FACES_PIC_FOLDER) / Path(fileName)
-        await newPhoto.download_to_drive(filePath.abspath())
+        await newPhoto.download_to_drive(filePath.absolute())
         logger.info("Picture saved at %s" % filePath)
 
         try:
