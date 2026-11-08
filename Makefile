@@ -1,4 +1,4 @@
-.PHONY: install install-dev dev build run push release release-multi deploy
+.PHONY: install install-dev dev test build run push release release-multi deploy
 
 DOCKER_REPOSITERY=dixneuf19
 IMAGE_NAME=dank-face-bot
@@ -15,6 +15,9 @@ install-dev: install
 
 dev:
 	python main.py
+
+test:
+	python -m pytest
 
 format:
 	isort .
